@@ -97,3 +97,10 @@
 - [x] Show error messages on registration and login failures
 - [x] Remove demo text from login form
 - [x] Verify registration works end-to-end (22 tests passing)
+
+## Phase 10.7: Fix superjson response parsing in AuthContext
+- [x] Fix AuthContext to unwrap superjson { json: ... } response format (added unwrapTrpcResponse helper)
+- [x] Show specific error messages ("Email already registered") instead of generic fallback
+- [x] Fix auth.me useEffect to properly unwrap superjson and skip Manus OAuth users
+- [x] Allow email registration when existing user was created via Manus OAuth (upgrade auth method)
+- [x] Verified registration works end-to-end: form → backend → account page with correct data

@@ -51,6 +51,16 @@ function trpcBody(data: Record<string, unknown>) {
   return JSON.stringify({ json: data });
 }
 
+// tRPC with superjson wraps response data in { result: { data: { json: ... } } }
+// This helper unwraps it to get the actual data
+function unwrapTrpcResponse(responseJson: any): any {
+  // Mutation response: { result: { data: { json: { ... } } } }
+  const data = responseJson?.result?.data;
+  if (data?.json !== undefined) return data.json;
+  // Query response or direct data
+  return data;
+}
+
 function transformBackendUser(userData: Record<string, unknown>, fallbackEmail?: string): User {
   const name = (userData.name as string) || '';
   return {
@@ -89,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const response = await fetch('/api/trpc/auth.me', { credentials: 'include' });
         if (response.ok) {
           const result = await response.json();
-          const userData = result.result?.data;
+          const userData = unwrapTrpcResponse(result);
           // Only restore session for email-registered users, not Manus OAuth users
           if (!userData || userData.authMethod !== 'email') return;
           const transformedUser = transformBackendUser(userData);
@@ -114,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (response.ok) {
         const result = await response.json();
-        const data = result.result?.data;
+        const data = unwrapTrpcResponse(result);
         if (!data?.success || !data?.user) {
           return data?.error || 'Account not found. Please register first.';
         }
@@ -146,7 +156,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (response.ok) {
         const result = await response.json();
-        const resData = result.result?.data;
+        const resData = unwrapTrpcResponse(result);
         if (!resData?.success || !resData?.user) {
           return resData?.error || 'Registration failed. Please try again.';
         }

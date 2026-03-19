@@ -47,10 +47,11 @@ export const appRouter = router({
       birthday: z.string().min(1),
     })).mutation(async ({ input }) => {
       const existing = await db.getUserByEmail(input.email);
-      if (existing) {
-        return { success: false, error: "Email already registered" };
+      if (existing && existing.authMethod === 'email') {
+        return { success: false, error: "Email already registered. Please sign in instead." };
       }
-      const openId = `email_${input.email}_${Date.now()}`;
+      // If user exists via Manus OAuth, upgrade to email auth with their new details
+      const openId = existing?.openId || `email_${input.email}_${Date.now()}`;
       await db.upsertUser({
         openId,
         email: input.email,
@@ -58,8 +59,8 @@ export const appRouter = router({
         phone: input.phone,
         birthday: input.birthday,
         authMethod: 'email',
-        role: 'user',
-        rewardPoints: 25,
+        role: existing?.role || 'user',
+        rewardPoints: existing?.rewardPoints || 25,
       });
       const newUser = await db.getUserByEmail(input.email);
       if (!newUser) {
