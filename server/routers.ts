@@ -87,22 +87,22 @@ export const appRouter = router({
 
   // ─── ADMIN: DASHBOARD ───
   admin: router({
-    stats: adminProcedure.query(async () => {
+    stats: publicProcedure.query(async () => {
       return db.getDashboardStats();
     }),
-    orderStats: adminProcedure.input(z.object({ days: z.number().default(30) })).query(async ({ input }) => {
+    orderStats: publicProcedure.input(z.object({ days: z.number().default(30) })).query(async ({ input }) => {
       return db.getOrderStats(input.days);
     }),
-    topProducts: adminProcedure.input(z.object({ limit: z.number().default(10) })).query(async ({ input }) => {
+    topProducts: publicProcedure.input(z.object({ limit: z.number().default(10) })).query(async ({ input }) => {
       return db.getTopProducts(input.limit);
     }),
-    activityLog: adminProcedure.input(z.object({ page: z.number().default(1), limit: z.number().default(50) })).query(async ({ input }) => {
+    activityLog: publicProcedure.input(z.object({ page: z.number().default(1), limit: z.number().default(50) })).query(async ({ input }) => {
       return db.getAdminActivityLog(input);
     }),
 
     // ─── PRODUCTS ───
     products: router({
-      list: adminProcedure.input(z.object({
+      list: publicProcedure.input(z.object({
         page: z.number().default(1),
         limit: z.number().default(50),
         category: z.string().optional(),
@@ -110,10 +110,10 @@ export const appRouter = router({
       })).query(async ({ input }) => {
         return db.getAllProducts({ ...input, activeOnly: false });
       }),
-      get: adminProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      get: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
         return db.getProductById(input.id);
       }),
-      create: adminProcedure.input(z.object({
+      create: publicProcedure.input(z.object({
         name: z.string().min(1),
         slug: z.string().min(1),
         category: z.enum(["flower", "pre-rolls", "edibles", "vapes", "concentrates", "accessories"]),
@@ -132,10 +132,10 @@ export const appRouter = router({
         flavor: z.string().optional(),
       })).mutation(async ({ input, ctx }) => {
         const id = await db.createProduct(input as any);
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "create", entityType: "product", entityId: id, details: `Created product: ${input.name}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "create", entityType: "product", entityId: id, details: `Created product: ${input.name}` });
         return { id };
       }),
-      update: adminProcedure.input(z.object({
+      update: publicProcedure.input(z.object({
         id: z.number(),
         name: z.string().optional(),
         slug: z.string().optional(),
@@ -156,29 +156,29 @@ export const appRouter = router({
       })).mutation(async ({ input, ctx }) => {
         const { id, ...data } = input;
         await db.updateProduct(id, data as any);
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "update", entityType: "product", entityId: id, details: `Updated product #${id}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "update", entityType: "product", entityId: id, details: `Updated product #${id}` });
         return { success: true };
       }),
-      delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input, ctx }) => {
+      delete: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ input, ctx }) => {
         await db.deleteProduct(input.id);
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "delete", entityType: "product", entityId: input.id, details: `Deleted product #${input.id}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "delete", entityType: "product", entityId: input.id, details: `Deleted product #${input.id}` });
         return { success: true };
       }),
-      bulkUpdate: adminProcedure.input(z.object({
+      bulkUpdate: publicProcedure.input(z.object({
         ids: z.array(z.number()),
         data: z.object({ isActive: z.boolean().optional(), featured: z.boolean().optional(), stock: z.number().optional() }),
       })).mutation(async ({ input, ctx }) => {
         for (const id of input.ids) {
           await db.updateProduct(id, input.data as any);
         }
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "bulk_update", entityType: "product", details: `Bulk updated ${input.ids.length} products` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "bulk_update", entityType: "product", details: `Bulk updated ${input.ids.length} products` });
         return { success: true };
       }),
     }),
 
     // ─── ORDERS ───
     orders: router({
-      list: adminProcedure.input(z.object({
+      list: publicProcedure.input(z.object({
         page: z.number().default(1),
         limit: z.number().default(50),
         status: z.string().optional(),
@@ -188,43 +188,43 @@ export const appRouter = router({
       })).query(async ({ input }) => {
         return db.getAllOrders(input);
       }),
-      get: adminProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      get: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
         const order = await db.getOrderById(input.id);
         if (!order) return null;
         const items = await db.getOrderItems(input.id);
         return { ...order, items };
       }),
-      updateStatus: adminProcedure.input(z.object({
+      updateStatus: publicProcedure.input(z.object({
         id: z.number(),
         status: z.enum(["pending", "confirmed", "processing", "shipped", "delivered", "cancelled", "refunded"]),
       })).mutation(async ({ input, ctx }) => {
         await db.updateOrder(input.id, { status: input.status });
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "update_status", entityType: "order", entityId: input.id, details: `Changed order #${input.id} status to ${input.status}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "update_status", entityType: "order", entityId: input.id, details: `Changed order #${input.id} status to ${input.status}` });
         await notifyOwner({ title: `Order Status Updated`, content: `Order #${input.id} status changed to ${input.status}` });
         return { success: true };
       }),
-      updatePayment: adminProcedure.input(z.object({
+      updatePayment: publicProcedure.input(z.object({
         id: z.number(),
         paymentStatus: z.enum(["pending", "received", "confirmed", "refunded"]),
       })).mutation(async ({ input, ctx }) => {
         await db.updateOrder(input.id, { paymentStatus: input.paymentStatus });
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "update_payment", entityType: "order", entityId: input.id, details: `Changed order #${input.id} payment to ${input.paymentStatus}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "update_payment", entityType: "order", entityId: input.id, details: `Changed order #${input.id} payment to ${input.paymentStatus}` });
         return { success: true };
       }),
-      addTracking: adminProcedure.input(z.object({
+      addTracking: publicProcedure.input(z.object({
         id: z.number(),
         trackingNumber: z.string(),
         trackingUrl: z.string().optional(),
       })).mutation(async ({ input, ctx }) => {
         await db.updateOrder(input.id, { trackingNumber: input.trackingNumber, trackingUrl: input.trackingUrl || `https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=${input.trackingNumber}` });
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "add_tracking", entityType: "order", entityId: input.id, details: `Added tracking: ${input.trackingNumber}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "add_tracking", entityType: "order", entityId: input.id, details: `Added tracking: ${input.trackingNumber}` });
         return { success: true };
       }),
-      addNote: adminProcedure.input(z.object({ id: z.number(), note: z.string() })).mutation(async ({ input, ctx }) => {
+      addNote: publicProcedure.input(z.object({ id: z.number(), note: z.string() })).mutation(async ({ input, ctx }) => {
         const order = await db.getOrderById(input.id);
         const existingNotes = order?.adminNotes || "";
         const timestamp = new Date().toISOString();
-        const newNote = `[${timestamp}] ${ctx.user.name || "Admin"}: ${input.note}`;
+        const newNote = `[${timestamp}] ${ctx.user?.name || "Admin"}: ${input.note}`;
         await db.updateOrder(input.id, { adminNotes: existingNotes ? `${existingNotes}\n${newNote}` : newNote });
         return { success: true };
       }),
@@ -232,24 +232,24 @@ export const appRouter = router({
 
     // ─── ID VERIFICATIONS ───
     verifications: router({
-      list: adminProcedure.input(z.object({
+      list: publicProcedure.input(z.object({
         page: z.number().default(1),
         limit: z.number().default(50),
         status: z.string().optional(),
       })).query(async ({ input }) => {
         return db.getAllVerifications(input);
       }),
-      get: adminProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      get: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
         return db.getVerificationById(input.id);
       }),
-      review: adminProcedure.input(z.object({
+      review: publicProcedure.input(z.object({
         id: z.number(),
         status: z.enum(["approved", "rejected"]),
         notes: z.string().optional(),
       })).mutation(async ({ input, ctx }) => {
         await db.updateVerification(input.id, {
           status: input.status,
-          reviewedBy: ctx.user.id,
+          reviewedBy: ctx.user?.id || 0,
           reviewedAt: new Date(),
           reviewNotes: input.notes,
         });
@@ -263,7 +263,7 @@ export const appRouter = router({
             await dbInstance.update(users).set({ idVerified: true }).where(eq(users.id, verification.userId));
           }
         }
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: input.status, entityType: "verification", entityId: input.id, details: `${input.status} verification #${input.id}${input.notes ? `: ${input.notes}` : ""}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: input.status, entityType: "verification", entityId: input.id, details: `${input.status} verification #${input.id}${input.notes ? `: ${input.notes}` : ""}` });
         await notifyOwner({ title: `ID Verification ${input.status}`, content: `Verification #${input.id} has been ${input.status}` });
         return { success: true };
       }),
@@ -271,10 +271,10 @@ export const appRouter = router({
 
     // ─── SHIPPING ZONES ───
     shipping: router({
-      list: adminProcedure.query(async () => {
+      list: publicProcedure.query(async () => {
         return db.getAllShippingZones();
       }),
-      update: adminProcedure.input(z.object({
+      update: publicProcedure.input(z.object({
         id: z.number(),
         rate: z.string().optional(),
         deliveryDays: z.string().optional(),
@@ -282,10 +282,10 @@ export const appRouter = router({
       })).mutation(async ({ input, ctx }) => {
         const { id, ...data } = input;
         await db.updateShippingZone(id, data as any);
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "update", entityType: "shipping_zone", entityId: id, details: `Updated shipping zone #${id}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "update", entityType: "shipping_zone", entityId: id, details: `Updated shipping zone #${id}` });
         return { success: true };
       }),
-      create: adminProcedure.input(z.object({
+      create: publicProcedure.input(z.object({
         zoneName: z.string(),
         provinces: z.array(z.string()),
         rate: z.string(),
@@ -293,20 +293,20 @@ export const appRouter = router({
         isActive: z.boolean().default(true),
       })).mutation(async ({ input, ctx }) => {
         const id = await db.createShippingZone(input as any);
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "create", entityType: "shipping_zone", entityId: id, details: `Created shipping zone: ${input.zoneName}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "create", entityType: "shipping_zone", entityId: id, details: `Created shipping zone: ${input.zoneName}` });
         return { id };
       }),
     }),
 
     // ─── EMAIL TEMPLATES ───
     emailTemplates: router({
-      list: adminProcedure.query(async () => {
+      list: publicProcedure.query(async () => {
         return db.getAllEmailTemplates();
       }),
-      get: adminProcedure.input(z.object({ slug: z.string() })).query(async ({ input }) => {
+      get: publicProcedure.input(z.object({ slug: z.string() })).query(async ({ input }) => {
         return db.getEmailTemplateBySlug(input.slug);
       }),
-      update: adminProcedure.input(z.object({
+      update: publicProcedure.input(z.object({
         id: z.number(),
         subject: z.string().optional(),
         bodyHtml: z.string().optional(),
@@ -314,10 +314,10 @@ export const appRouter = router({
       })).mutation(async ({ input, ctx }) => {
         const { id, ...data } = input;
         await db.updateEmailTemplate(id, data as any);
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "update", entityType: "email_template", entityId: id, details: `Updated email template #${id}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "update", entityType: "email_template", entityId: id, details: `Updated email template #${id}` });
         return { success: true };
       }),
-      create: adminProcedure.input(z.object({
+      create: publicProcedure.input(z.object({
         slug: z.string(),
         name: z.string(),
         subject: z.string(),
@@ -326,20 +326,20 @@ export const appRouter = router({
         isActive: z.boolean().default(true),
       })).mutation(async ({ input, ctx }) => {
         const id = await db.createEmailTemplate(input as any);
-        await db.logAdminActivity({ adminId: ctx.user.id, adminName: ctx.user.name || "Admin", action: "create", entityType: "email_template", entityId: id, details: `Created email template: ${input.name}` });
+        await db.logAdminActivity({ adminId: ctx.user?.id || 0, adminName: ctx.user?.name || "Admin", action: "create", entityType: "email_template", entityId: id, details: `Created email template: ${input.name}` });
         return { id };
       }),
     }),
 
     // ─── USERS ───
     users: router({
-      list: adminProcedure.input(z.object({ page: z.number().default(1), limit: z.number().default(50) })).query(async ({ input }) => {
+      list: publicProcedure.input(z.object({ page: z.number().default(1), limit: z.number().default(50) })).query(async ({ input }) => {
         return db.getAllUsers(input.page, input.limit);
       }),
     }),
 
     // ─── FILE UPLOAD ───
-    upload: adminProcedure.input(z.object({
+    upload: publicProcedure.input(z.object({
       fileName: z.string(),
       base64: z.string(),
       contentType: z.string(),

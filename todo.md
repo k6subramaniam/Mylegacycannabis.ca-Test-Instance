@@ -104,3 +104,11 @@
 - [x] Fix auth.me useEffect to properly unwrap superjson and skip Manus OAuth users
 - [x] Allow email registration when existing user was created via Manus OAuth (upgrade auth method)
 - [x] Verified registration works end-to-end: form → backend → account page with correct data
+
+## Phase 10.8: Make Admin Panel Publicly Accessible
+- [x] Remove Manus OAuth authentication requirement from admin frontend routes (AdminLayout)
+- [x] Change admin backend procedures from adminProcedure to publicProcedure
+- [x] Fix ctx.user references to use optional chaining with fallback values
+- [x] Test admin panel is accessible without login
+- [x] Update admin test to reflect public access
+- [ ] Republish
