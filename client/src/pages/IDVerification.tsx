@@ -82,12 +82,17 @@ export default function IDVerification() {
 
   const handleSubmit = async () => {
     if (!frontFile) { toast.error('Please upload a photo of your government-issued ID'); return; }
+    // Check file size (16MB limit for backend)
+    if (frontFile.size > 16 * 1024 * 1024) { toast.error('Front ID image must be under 16MB'); return; }
+    if (selfieFile && selfieFile.size > 16 * 1024 * 1024) { toast.error('Selfie image must be under 16MB'); return; }
     setSubmitting(true);
-    // Simulate upload
-    await new Promise(r => setTimeout(r, 1500));
-    submitIdVerification();
+    const result = await submitIdVerification(frontFile, selfieFile);
     setSubmitting(false);
-    toast.success('ID submitted for verification!');
+    if (result === true) {
+      toast.success('ID submitted for verification!');
+    } else {
+      toast.error(result);
+    }
   };
 
   return (

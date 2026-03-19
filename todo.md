@@ -111,4 +111,12 @@
 - [x] Fix ctx.user references to use optional chaining with fallback values
 - [x] Test admin panel is accessible without login
 - [x] Update admin test to reflect public access
+- [x] Republish
+
+## Phase 10.9: Fix ID Verification Not Showing in Admin
+- [x] Investigate why customer ID submissions don't appear in admin ID Verification page
+- [x] Fix verification submission to persist to database (send files to store.submitVerification endpoint)
+- [x] Updated AuthContext submitIdVerification to convert files to base64 and POST to backend
+- [x] Updated IDVerification.tsx to pass actual files to the backend
+- [x] Build passes, all 22 tests pass
 - [ ] Republish

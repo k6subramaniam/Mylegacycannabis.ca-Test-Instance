@@ -41,7 +41,7 @@ interface AuthContextType {
   register: (data: { email: string; password: string; firstName: string; lastName: string; phone: string; birthday: string }) => Promise<true | string>;
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
-  submitIdVerification: () => void;
+  submitIdVerification: (frontFile: File, selfieFile?: File | null) => Promise<true | string>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -203,14 +203,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const submitIdVerification = useCallback(() => {
-    setUser(prev => {
-      if (!prev) return prev;
-      const updated = { ...prev, idVerificationStatus: 'pending' as const };
-      localStorage.setItem('mlc-user', JSON.stringify(updated));
-      return updated;
-    });
-  }, []);
+  const submitIdVerification = useCallback(async (frontFile: File, selfieFile?: File | null): Promise<true | string> => {
+    try {
+      // Convert files to base64
+      const toBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            // Strip the data URL prefix (e.g., "data:image/jpeg;base64,")
+            const base64 = result.split(',')[1];
+            resolve(base64);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      };
+
+      const frontBase64 = await toBase64(frontFile);
+      const payload: Record<string, unknown> = {
+        frontImageBase64: frontBase64,
+        contentType: frontFile.type || 'image/jpeg',
+        guestEmail: user?.email || '',
+        guestName: user?.name || '',
+      };
+
+      if (selfieFile) {
+        payload.selfieImageBase64 = await toBase64(selfieFile);
+      }
+
+      const response = await fetch('/api/trpc/store.submitVerification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: trpcBody(payload),
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const data = unwrapTrpcResponse(result);
+        if (data?.id) {
+          setUser(prev => {
+            if (!prev) return prev;
+            const updated = { ...prev, idVerificationStatus: 'pending' as const };
+            localStorage.setItem('mlc-user', JSON.stringify(updated));
+            return updated;
+          });
+          return true;
+        }
+        return data?.error || 'Verification submission failed.';
+      }
+      return 'Verification submission failed. Please try again.';
+    } catch (error) {
+      console.error('ID verification error:', error);
+      return 'Verification submission failed. Please try again.';
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{
