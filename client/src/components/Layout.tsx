@@ -274,21 +274,22 @@ function MobileBottomNav() {
 // ============================================================
 // BREADCRUMBS
 // ============================================================
-export function Breadcrumbs({ items }: { items: { label: string; href?: string }[] }) {
+export function Breadcrumbs({ items, variant = 'light' }: { items: { label: string; href?: string }[]; variant?: 'light' | 'dark' }) {
+  const isOnDark = variant === 'dark';
   return (
-    <nav aria-label="Breadcrumb" className="py-3 text-sm font-body">
+    <nav aria-label="Breadcrumb" className="py-2 text-sm font-body">
       <ol className="flex items-center gap-1.5 flex-wrap" itemScope itemType="https://schema.org/BreadcrumbList">
         {items.map((item, i) => (
           <li key={i} className="flex items-center gap-1.5" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
             {item.href ? (
-              <Link href={item.href} className="text-[#4B2D8E] hover:text-[#F15929] transition-colors" itemProp="item">
+              <Link href={item.href} className={`${isOnDark ? 'text-white/80 hover:text-white' : 'text-[#4B2D8E] hover:text-[#F15929]'} transition-colors`} itemProp="item">
                 <span itemProp="name">{item.label}</span>
               </Link>
             ) : (
-              <span className="text-gray-500" itemProp="name">{item.label}</span>
+              <span className={isOnDark ? 'text-white' : 'text-gray-500'} itemProp="name">{item.label}</span>
             )}
             <meta itemProp="position" content={String(i + 1)} />
-            {i < items.length - 1 && <ChevronRight size={14} className="text-gray-400" />}
+            {i < items.length - 1 && <ChevronRight size={14} className={isOnDark ? 'text-white/50' : 'text-gray-400'} />}
           </li>
         ))}
       </ol>
@@ -302,7 +303,7 @@ export function Breadcrumbs({ items }: { items: { label: string; href?: string }
 export function WaveDivider({ color = '#4B2D8E', flip = false, className = '' }: { color?: string; flip?: boolean; className?: string }) {
   return (
     <div className={`wave-divider ${flip ? 'rotate-180' : ''} ${className}`} aria-hidden="true">
-      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ width: '100%', height: '60px' }}>
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ width: '100%', height: '40px' }}>
         <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z" fill={color} />
       </svg>
     </div>

@@ -28,9 +28,9 @@ export default function Contact() {
         canonical="https://mylegacycannabis.ca/contact"
       />
 
-      <section className="bg-[#4B2D8E] py-12">
+      <section className="bg-[#4B2D8E] py-6">
         <div className="container">
-          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Contact Us' }]} />
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Contact Us' }]} variant="dark" />
           <h1 className="font-display text-3xl md:text-4xl text-white">CONTACT US</h1>
           <p className="text-white/70 font-body mt-2">We'd love to hear from you. Reach out anytime.</p>
         </div>

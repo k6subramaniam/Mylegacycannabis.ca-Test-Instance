@@ -4,7 +4,7 @@ import { Breadcrumbs } from '@/components/Layout';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { canadianProvinces, FREE_SHIPPING_THRESHOLD, MINIMUM_ORDER, getEligibleRewardTiers } from '@/lib/data';
-import { Minus, Plus, Trash2, Truck, Gift, ShoppingCart, ArrowRight, AlertCircle } from 'lucide-react';
+import { Minus, Plus, Trash2, Truck, Gift, ShoppingCart, ArrowRight, AlertCircle, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -153,6 +153,14 @@ export default function Cart() {
                     <p className="text-xs text-red-600 font-body">Minimum order is ${MINIMUM_ORDER}. Add ${(MINIMUM_ORDER - subtotal).toFixed(2)} more to proceed.</p>
                   </div>
                 )}
+
+                {/* ID verification reminder */}
+                <div className="bg-[#4B2D8E]/5 border border-[#4B2D8E]/10 rounded-lg p-3 mb-4">
+                  <p className="text-xs font-body text-[#4B2D8E] flex items-start gap-1.5">
+                    <Shield size={14} className="shrink-0 mt-0.5" />
+                    <span>{user?.idVerificationStatus === 'approved' ? <strong className="text-green-600">ID Verified ✓</strong> : 'ID verification required at checkout (19+)'}</span>
+                  </p>
+                </div>
 
                 <Link href={meetsMinimum ? '/checkout' : '#'}
                   className={`block w-full text-center font-display py-3.5 rounded-full transition-all ${meetsMinimum ? 'bg-[#F15929] hover:bg-[#d94d22] text-white hover:scale-[1.02]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>

@@ -95,9 +95,9 @@ export default function FAQ() {
         canonical="https://mylegacycannabis.ca/faq"
       />
 
-      <section className="bg-[#4B2D8E] py-12">
+      <section className="bg-[#4B2D8E] py-6">
         <div className="container">
-          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'FAQ' }]} />
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'FAQ' }]} variant="dark" />
           <h1 className="font-display text-3xl md:text-4xl text-white mb-4">FREQUENTLY ASKED QUESTIONS</h1>
           <div className="relative max-w-lg">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />

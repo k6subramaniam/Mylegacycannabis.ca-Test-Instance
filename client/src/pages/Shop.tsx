@@ -47,13 +47,13 @@ export default function Shop() {
       <SEOHead title={pageTitle} description={activeCat ? activeCat.description : 'Browse our full selection of premium cannabis products — flower, pre-rolls, edibles, vapes, concentrates, and accessories. Free shipping on orders over $150.'} canonical={`https://mylegacycannabis.ca/shop${selectedCategory ? '/' + selectedCategory : ''}`} />
 
       {/* Hero */}
-      <section className="relative bg-[#4B2D8E] py-12 md:py-16 overflow-hidden">
+      <section className="relative bg-[#4B2D8E] py-6 md:py-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={HERO_IMG} alt="Cannabis products shop" className="w-full h-full object-cover opacity-30" loading="eager" />
           <div className="absolute inset-0 bg-[#4B2D8E]/70" />
         </div>
         <div className="container relative z-10">
-          <Breadcrumbs items={breadcrumbs} />
+          <Breadcrumbs items={breadcrumbs} variant="dark" />
           <h1 className="font-display text-3xl md:text-4xl text-white">{activeCat ? activeCat.name.toUpperCase() : 'SHOP ALL'}</h1>
           <p className="text-white/70 font-body mt-2 max-w-lg">{activeCat ? activeCat.description : 'Browse our full selection of premium cannabis products.'}</p>
         </div>

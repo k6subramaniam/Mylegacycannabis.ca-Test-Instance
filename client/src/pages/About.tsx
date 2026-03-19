@@ -22,8 +22,8 @@ export default function About() {
           <img src={HERO_IMG} alt="About My Legacy Cannabis" className="w-full h-full object-cover opacity-30" loading="eager" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#4B2D8E] via-[#4B2D8E]/80 to-transparent" />
         </div>
-        <div className="container relative z-10 py-16 md:py-24">
-          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About Us' }]} />
+        <div className="container relative z-10 py-6 md:py-10">
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About Us' }]} variant="dark" />
           <motion.div initial="hidden" animate="visible" variants={fadeUp} className="max-w-2xl">
             <h1 className="font-display text-4xl md:text-5xl text-white leading-tight mb-4">
               OUR <span className="text-[#F15929]">LEGACY</span>

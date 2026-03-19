@@ -146,8 +146,8 @@ export default function Locations() {
           />
           <div className="absolute inset-0 bg-[#4B2D8E]/70" />
         </div>
-        <div className="container relative z-10 py-12 md:py-20">
-          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Locations' }]} />
+        <div className="container relative z-10 py-6 md:py-10">
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Locations' }]} variant="dark" />
           <h1 className="font-display text-3xl md:text-4xl text-white mb-3">OUR LOCATIONS</h1>
           <p className="text-white/70 font-body max-w-lg">
             5 locations across the Greater Toronto Area and Ottawa — all open 24/7.
@@ -157,7 +157,7 @@ export default function Locations() {
       </section>
 
       {/* Locations Carousel */}
-      <section className="bg-white py-12 md:py-16 -mt-1">
+      <section className="bg-white py-6 md:py-10 -mt-1">
         <div className="container">
           {/* Header with navigation arrows */}
           <div className="flex items-center justify-between mb-6">

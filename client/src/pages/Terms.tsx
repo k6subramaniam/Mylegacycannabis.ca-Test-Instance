@@ -10,9 +10,9 @@ export default function Terms() {
         canonical="https://mylegacycannabis.ca/terms"
       />
 
-      <section className="bg-[#4B2D8E] py-12">
+      <section className="bg-[#4B2D8E] py-6">
         <div className="container">
-          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Terms & Conditions' }]} />
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Terms & Conditions' }]} variant="dark" />
           <h1 className="font-display text-3xl md:text-4xl text-white">TERMS & CONDITIONS</h1>
           <p className="text-white/70 font-body mt-2">Last updated: March 2026</p>
         </div>

@@ -23,7 +23,7 @@ export default function Rewards() {
           <img src={HERO_IMG} alt="My Legacy Rewards loyalty program" className="w-full h-full object-cover opacity-30" loading="eager" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#4B2D8E] via-[#4B2D8E]/80 to-transparent" />
         </div>
-        <div className="container relative z-10 py-16 md:py-24">
+        <div className="container relative z-10 py-8 md:py-14">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} className="max-w-2xl">
             <span className="inline-block bg-[#F15929] text-white font-display text-xs px-4 py-1.5 rounded-full mb-4">LOYALTY PROGRAM</span>
             <h1 className="font-display text-4xl md:text-5xl text-white leading-tight mb-4">
