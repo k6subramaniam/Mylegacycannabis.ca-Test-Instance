@@ -89,3 +89,11 @@
 - [x] Update upsertUser to handle phone and birthday fields
 - [x] Write vitest tests for loginEmail and register (5 tests passing)
 - [x] Verify Account page displays actual user data (not Alex Thompson)
+
+## Phase 10.6: Fix Registration Flow Bug
+- [x] Debug why CREATE ACCOUNT button does nothing when clicked
+- [x] Fix root cause: tRPC superjson wire format requires {json: ...} wrapper
+- [x] Fix root cause: auth.me auto-login was bypassing register form for Manus OAuth users
+- [x] Show error messages on registration and login failures
+- [x] Remove demo text from login form
+- [x] Verify registration works end-to-end (22 tests passing)

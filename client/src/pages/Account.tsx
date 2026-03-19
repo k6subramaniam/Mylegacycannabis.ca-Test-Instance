@@ -276,11 +276,19 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = await login(email, password);
-    if (ok) { toast.success('Welcome back!'); navigate('/account'); }
+    setError('');
+    const result = await login(email, password);
+    if (result === true) {
+      toast.success('Welcome back!');
+      navigate('/account');
+    } else {
+      setError(result);
+      toast.error(result);
+    }
   };
 
   return (
@@ -300,11 +308,12 @@ function LoginForm() {
               <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">{showPw ? <EyeOff size={16} /> : <Eye size={16} />}</button>
             </div>
           </div>
+          {error && <p className="text-sm text-red-500 font-body text-center">{error}</p>}
           <button type="submit" className="w-full bg-[#F15929] hover:bg-[#d94d22] text-white font-display py-3.5 rounded-full transition-all">SIGN IN</button>
           <p className="text-center text-sm text-gray-500 font-body">
             Don't have an account? <Link href="/account/register" className="text-[#4B2D8E] hover:text-[#F15929] font-medium">Create one</Link>
           </p>
-          <p className="text-center text-xs text-gray-400 font-body">Demo: Enter any email/password to sign in.</p>
+
         </form>
       </section>
     </>
@@ -317,14 +326,24 @@ function RegisterForm() {
   const [form, setForm] = useState({ email: '', password: '', firstName: '', lastName: '', phone: '', birthday: '' });
   const [showPw, setShowPw] = useState(false);
 
+  const [error, setError] = useState('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (!form.birthday) {
       toast.error('Birthday is required');
       return;
     }
-    const ok = await doRegister(form as { email: string; password: string; firstName: string; lastName: string; phone: string; birthday: string });
-    if (ok) { toast.success(`Welcome! You earned ${WELCOME_BONUS} bonus points!`); navigate('/account'); }
+    const result = await doRegister(form as { email: string; password: string; firstName: string; lastName: string; phone: string; birthday: string });
+    if (result === true) {
+      toast.success(`Welcome! You earned ${WELCOME_BONUS} bonus points!`);
+      navigate('/account');
+    } else {
+      const msg = typeof result === 'string' ? result : 'Registration failed. Please try again.';
+      setError(msg);
+      toast.error(msg);
+    }
   };
 
   return (
@@ -366,6 +385,7 @@ function RegisterForm() {
             <input type="date" value={form.birthday} onChange={e => setForm({...form, birthday: e.target.value})} className="w-full bg-white rounded-lg px-4 py-3 text-sm font-body border-none focus:ring-2 focus:ring-[#4B2D8E]" required />
           </div>
           <p className="text-xs text-gray-400 font-body">You must be 19 years or older. ID verification required before first order.</p>
+          {error && <p className="text-sm text-red-500 font-body text-center">{error}</p>}
           <button type="submit" className="w-full bg-[#F15929] hover:bg-[#d94d22] text-white font-display py-3.5 rounded-full transition-all">CREATE ACCOUNT</button>
           <p className="text-center text-sm text-gray-500 font-body">
             Already have an account? <Link href="/account/login" className="text-[#4B2D8E] hover:text-[#F15929] font-medium">Sign in</Link>
