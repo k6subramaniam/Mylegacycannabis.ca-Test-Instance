@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE users SET email = 'alectric@gmail.com' WHERE name = 'Anubhav Ahuja';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 6wKD3ZGJjqN1UbM.66e3e160f525 --database 5wgxseZemq4jvbSSj7t6zG --execute UPDATE users SET email = 'alectric@gmail.com' WHERE name = 'Anubhav Ahuja';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 53
+}
