@@ -20,7 +20,7 @@ export default function Home() {
     <>
       <SEOHead
         title="My Legacy Cannabis — 24/7 Cannabis Dispensary | GTA & Ottawa"
-        description="Premium 24/7 cannabis dispensary with 5 locations across the GTA and Ottawa. Shop flower, pre-rolls, edibles, vapes, and more. Free shipping on orders over $150. Nationwide delivery across Canada."
+        description="24/7 cannabis dispensary with 5 GTA & Ottawa locations. Shop flower, edibles, vapes & more. Free shipping over $150 Canada-wide."
         canonical="https://mylegacycannabis.ca/"
       />
 
