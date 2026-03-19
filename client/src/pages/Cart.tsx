@@ -4,14 +4,19 @@ import { Breadcrumbs } from '@/components/Layout';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { canadianProvinces, FREE_SHIPPING_THRESHOLD, MINIMUM_ORDER, getEligibleRewardTiers } from '@/lib/data';
+import { trpc } from '@/lib/trpc';
 import { Minus, Plus, Trash2, Truck, Gift, ShoppingCart, ArrowRight, AlertCircle, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
+
+const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, subtotal, shippingRate, shippingProvince, setShippingProvince, total, isFreeShipping, freeShippingProgress, amountToFreeShipping, meetsMinimum, pointsToEarn, appliedReward, applyReward, rewardDiscount } = useCart();
   const { user } = useAuth();
   const eligibleTiers = user ? getEligibleRewardTiers(user.rewardsPoints) : [];
+  const { data: shippingZones } = trpc.store.shippingZones.useQuery();
 
   if (items.length === 0) {
     return (

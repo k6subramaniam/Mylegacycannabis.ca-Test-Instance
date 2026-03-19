@@ -63,3 +63,21 @@
 ## Phase 10: SEO Fixes
 - [x] Reduce homepage keywords from 10 to 6 focused keywords
 - [x] Shorten homepage meta description from 196 to 131 characters
+
+
+## Phase 11: Wire Storefront to Database
+- [ ] Add backend API routes for fetching products with filters/search
+- [ ] Add backend API route for creating orders
+- [ ] Connect Shop page to fetch products from backend
+- [ ] Connect Product page to fetch product details from backend
+- [ ] Connect Cart page to use backend cart/order submission
+- [ ] Connect Checkout page to submit orders to backend
+- [ ] Add order confirmation page
+- [ ] Test end-to-end: browse, add to cart, checkout
+
+## Phase 12: Product Image Management
+- [ ] Add image upload field to admin Products page
+- [ ] Add S3 storage integration for product images
+- [ ] Display product images on Shop and Product pages
+- [ ] Add image preview in admin Products list
+- [ ] Test image upload and display
