@@ -314,12 +314,16 @@ function LoginForm() {
 function RegisterForm() {
   const { register: doRegister } = useAuth();
   const [, navigate] = useLocation();
-  const [form, setForm] = useState({ email: '', password: '', firstName: '', lastName: '', birthday: '' });
+  const [form, setForm] = useState({ email: '', password: '', firstName: '', lastName: '', phone: '', birthday: '' });
   const [showPw, setShowPw] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = await doRegister(form);
+    if (!form.birthday) {
+      toast.error('Birthday is required');
+      return;
+    }
+    const ok = await doRegister(form as { email: string; password: string; firstName: string; lastName: string; phone: string; birthday: string });
     if (ok) { toast.success(`Welcome! You earned ${WELCOME_BONUS} bonus points!`); navigate('/account'); }
   };
 
@@ -347,6 +351,10 @@ function RegisterForm() {
             <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full bg-white rounded-lg px-4 py-3 text-sm font-body border-none focus:ring-2 focus:ring-[#4B2D8E]" required />
           </div>
           <div>
+            <label className="text-xs text-gray-500 font-body block mb-1">Phone Number *</label>
+            <input type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="(437) 555-0123" className="w-full bg-white rounded-lg px-4 py-3 text-sm font-body border-none focus:ring-2 focus:ring-[#4B2D8E]" required />
+          </div>
+          <div>
             <label className="text-xs text-gray-500 font-body block mb-1">Password *</label>
             <div className="relative">
               <input type={showPw ? 'text' : 'password'} value={form.password} onChange={e => setForm({...form, password: e.target.value})} className="w-full bg-white rounded-lg px-4 py-3 text-sm font-body border-none focus:ring-2 focus:ring-[#4B2D8E] pr-10" required minLength={6} />
@@ -354,8 +362,8 @@ function RegisterForm() {
             </div>
           </div>
           <div>
-            <label className="text-xs text-gray-500 font-body block mb-1">Birthday <span className="text-[#F15929]">(optional — earn {BIRTHDAY_BONUS} pts!)</span></label>
-            <input type="date" value={form.birthday} onChange={e => setForm({...form, birthday: e.target.value})} className="w-full bg-white rounded-lg px-4 py-3 text-sm font-body border-none focus:ring-2 focus:ring-[#4B2D8E]" />
+            <label className="text-xs text-gray-500 font-body block mb-1">Birthday * <span className="text-[#F15929]">(earn {BIRTHDAY_BONUS} bonus pts!)</span></label>
+            <input type="date" value={form.birthday} onChange={e => setForm({...form, birthday: e.target.value})} className="w-full bg-white rounded-lg px-4 py-3 text-sm font-body border-none focus:ring-2 focus:ring-[#4B2D8E]" required />
           </div>
           <p className="text-xs text-gray-400 font-body">You must be 19 years or older. ID verification required before first order.</p>
           <button type="submit" className="w-full bg-[#F15929] hover:bg-[#d94d22] text-white font-display py-3.5 rounded-full transition-all">CREATE ACCOUNT</button>

@@ -81,3 +81,11 @@
 - [ ] Display product images on Shop and Product pages
 - [ ] Add image preview in admin Products list
 - [ ] Test image upload and display
+
+## Phase 10.5: Fix Critical Authentication Bug
+- [x] Add loginEmail backend endpoint to fetch user by email
+- [x] Add register backend endpoint to create new user
+- [x] Update AuthContext to call backend endpoints instead of using hardcoded DEMO_USER
+- [x] Update upsertUser to handle phone and birthday fields
+- [x] Write vitest tests for loginEmail and register (5 tests passing)
+- [x] Verify Account page displays actual user data (not Alex Thompson)

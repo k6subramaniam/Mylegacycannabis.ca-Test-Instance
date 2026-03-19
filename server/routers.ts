@@ -7,6 +7,7 @@ import * as db from "./db";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
 import { notifyOwner } from "./_core/notification";
+import { eq } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
@@ -16,6 +17,70 @@ export const appRouter = router({
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
+    }),
+    loginEmail: publicProcedure.input(z.object({ email: z.string().email() })).mutation(async ({ input }) => {
+      const user = await db.getUserByEmail(input.email);
+      if (!user) {
+        return { success: false, error: "User not found" };
+      }
+      return {
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          phone: user.phone,
+          birthday: user.birthday,
+          idVerified: user.idVerified,
+          idVerificationStatus: 'none',
+          rewardsPoints: user.rewardPoints || 0,
+          rewardsHistory: [],
+          referralCode: '',
+          orders: [],
+        },
+      };
+    }),
+    register: publicProcedure.input(z.object({
+      email: z.string().email(),
+      name: z.string().min(1),
+      phone: z.string().min(1),
+      birthday: z.string().min(1),
+    })).mutation(async ({ input }) => {
+      const existing = await db.getUserByEmail(input.email);
+      if (existing) {
+        return { success: false, error: "Email already registered" };
+      }
+      const openId = `email_${input.email}_${Date.now()}`;
+      await db.upsertUser({
+        openId,
+        email: input.email,
+        name: input.name,
+        phone: input.phone,
+        birthday: input.birthday,
+        authMethod: 'email',
+        role: 'user',
+        rewardPoints: 25,
+      });
+      const newUser = await db.getUserByEmail(input.email);
+      if (!newUser) {
+        return { success: false, error: "Failed to create user" };
+      }
+      return {
+        success: true,
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          name: newUser.name,
+          phone: newUser.phone,
+          birthday: newUser.birthday,
+          idVerified: newUser.idVerified,
+          idVerificationStatus: 'none',
+          rewardsPoints: newUser.rewardPoints || 25,
+          rewardsHistory: [],
+          referralCode: '',
+          orders: [],
+        },
+      };
     }),
   }),
 
