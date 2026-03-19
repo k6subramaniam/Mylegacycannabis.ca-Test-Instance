@@ -119,4 +119,4 @@
 - [x] Updated AuthContext submitIdVerification to convert files to base64 and POST to backend
 - [x] Updated IDVerification.tsx to pass actual files to the backend
 - [x] Build passes, all 22 tests pass
-- [ ] Republish
+- [x] Republish
