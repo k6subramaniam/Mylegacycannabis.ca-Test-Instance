@@ -26,6 +26,9 @@ const Contact = lazy(() => import("./pages/Contact"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Terms = lazy(() => import("./pages/Terms"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const CompleteProfile = lazy(() => import("./pages/CompleteProfile"));
 
 // Lazy load admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
@@ -104,6 +107,10 @@ function Router() {
     <Switch>
       <Route path="/admin/:rest*" component={AdminRouter} />
       <Route path="/admin" component={AdminRouter} />
+      {/* Auth pages — no Layout wrapper (full-screen) */}
+      <Route path="/login">{() => <Suspense fallback={<PageLoader />}><Login /></Suspense>}</Route>
+      <Route path="/register">{() => <Suspense fallback={<PageLoader />}><Register /></Suspense>}</Route>
+      <Route path="/complete-profile">{() => <Suspense fallback={<PageLoader />}><CompleteProfile /></Suspense>}</Route>
       <Route component={StorefrontRouter} />
     </Switch>
   );

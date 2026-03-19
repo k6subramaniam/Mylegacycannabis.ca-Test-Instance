@@ -17,6 +17,10 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   phone: varchar("phone", { length: 20 }),
+  phoneVerified: boolean("phoneVerified").default(false).notNull(),
+  emailVerified: boolean("emailVerified").default(false).notNull(),
+  googleId: varchar("googleId", { length: 255 }),
+  authMethod: mysqlEnum("authMethod", ["phone", "email", "google", "manus"]).default("manus"),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   birthday: varchar("birthday", { length: 10 }),
@@ -29,6 +33,22 @@ export const users = mysqlTable("users", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+// ─── VERIFICATION CODES (OTP) ───
+export const verificationCodes = mysqlTable("verification_codes", {
+  id: int("id").autoincrement().primaryKey(),
+  identifier: varchar("identifier", { length: 320 }).notNull(), // phone or email
+  code: varchar("code", { length: 6 }).notNull(),
+  type: mysqlEnum("type", ["sms", "email"]).notNull(),
+  purpose: mysqlEnum("purpose", ["login", "register", "verify"]).default("login").notNull(),
+  attempts: int("attempts").default(0).notNull(),
+  verified: boolean("verified").default(false).notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type VerificationCode = typeof verificationCodes.$inferSelect;
+export type InsertVerificationCode = typeof verificationCodes.$inferInsert;
 
 // ─── PRODUCTS ───
 export const products = mysqlTable("products", {

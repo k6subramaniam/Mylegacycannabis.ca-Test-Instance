@@ -10,6 +10,7 @@ import {
   emailTemplates, InsertEmailTemplate,
   adminActivityLog, InsertAdminActivityLog,
   rewardsHistory, InsertRewardsHistory,
+  verificationCodes, InsertVerificationCode,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -70,6 +71,79 @@ export async function getAllUsers(page = 1, limit = 50) {
     db.select({ total: count() }).from(users),
   ]);
   return { data, total };
+}
+
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserByPhone(phone: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserByGoogleId(googleId: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.googleId, googleId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateUser(id: number, data: Partial<InsertUser>) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users).set(data as any).where(eq(users.id, id));
+}
+
+// ─── OTP / VERIFICATION CODE HELPERS ───
+export async function createVerificationCode(data: { identifier: string; code: string; type: "sms" | "email"; purpose: "login" | "register" | "verify"; expiresAt: Date }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  // Invalidate any existing unused codes for this identifier+type+purpose
+  await db.update(verificationCodes)
+    .set({ verified: true })
+    .where(and(
+      eq(verificationCodes.identifier, data.identifier),
+      eq(verificationCodes.type, data.type),
+      eq(verificationCodes.verified, false)
+    ));
+  const result = await db.insert(verificationCodes).values(data);
+  return Number(result[0].insertId);
+}
+
+export async function verifyCode(identifier: string, code: string, type: "sms" | "email"): Promise<{ valid: boolean; reason?: string }> {
+  const db = await getDb();
+  if (!db) return { valid: false, reason: "Database not available" };
+  const results = await db.select().from(verificationCodes)
+    .where(and(
+      eq(verificationCodes.identifier, identifier),
+      eq(verificationCodes.type, type),
+      eq(verificationCodes.verified, false)
+    ))
+    .orderBy(desc(verificationCodes.createdAt))
+    .limit(1);
+  if (results.length === 0) return { valid: false, reason: "No verification code found. Please request a new code." };
+  const record = results[0];
+  if (new Date() > record.expiresAt) {
+    await db.update(verificationCodes).set({ verified: true }).where(eq(verificationCodes.id, record.id));
+    return { valid: false, reason: "Code has expired. Please request a new one." };
+  }
+  if (record.attempts >= 5) {
+    await db.update(verificationCodes).set({ verified: true }).where(eq(verificationCodes.id, record.id));
+    return { valid: false, reason: "Too many attempts. Please request a new code." };
+  }
+  if (record.code !== code) {
+    await db.update(verificationCodes).set({ attempts: record.attempts + 1 }).where(eq(verificationCodes.id, record.id));
+    return { valid: false, reason: `Incorrect code. ${4 - record.attempts} attempts remaining.` };
+  }
+  // Mark as verified
+  await db.update(verificationCodes).set({ verified: true }).where(eq(verificationCodes.id, record.id));
+  return { valid: true };
 }
 
 // ─── PRODUCT HELPERS ───
