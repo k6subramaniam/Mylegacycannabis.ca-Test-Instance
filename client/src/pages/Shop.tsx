@@ -29,7 +29,7 @@ export default function Shop() {
     limit: 100,
   });
 
-  const products = Array.isArray(productsData) ? productsData : [];
+  const products = Array.isArray(productsData?.data) ? productsData.data : [];
 
   const filtered = useMemo(() => {
     let result = [...products];
@@ -170,7 +170,7 @@ export default function Shop() {
                             <p className="text-xs text-gray-400 font-mono mb-3">THC: {product.thc}</p>
                             <div className="flex items-center justify-between">
                               <span className="font-display text-lg text-[#4B2D8E]">${parseFloat(product.price.toString()).toFixed(2)}</span>
-                              <button onClick={(e) => { e.preventDefault(); addItem(product); toast.success(`${product.name} added to cart`); }}
+                              <button onClick={(e) => { e.preventDefault(); addItem({ ...product, id: String(product.id), categorySlug: product.category, strainType: product.strainType || 'N/A', price: parseFloat(product.price.toString()), inStock: product.stock > 0, rating: 4.5, reviewCount: 0, images: product.images || [], image: product.image || '', description: product.description || '', shortDescription: product.shortDescription || '', flavor: product.flavor || '', weight: product.weight || '' } as any); toast.success(`${product.name} added to cart`); }}
                                 className="bg-[#F15929] hover:bg-[#d94d22] text-white p-2.5 rounded-full transition-all hover:scale-110 active:scale-95"
                                 aria-label={`Add ${product.name} to cart`}>
                                 <ShoppingCart size={16} />

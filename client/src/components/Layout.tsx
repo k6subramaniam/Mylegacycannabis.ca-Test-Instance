@@ -19,16 +19,20 @@ function AgeGate({ onConfirm }: { onConfirm: () => void }) {
         className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-2xl"
       >
         <img src={LOGO_URL} alt="My Legacy Cannabis logo" className="h-16 mx-auto mb-6" loading="eager" />
-        <h2 className="font-display text-2xl text-[#4B2D8E] mb-4">WELCOME TO MY LEGACY</h2>
-        <p className="text-[#333] mb-2 font-body">Before proceeding, please confirm that you are of legal age to purchase cannabis in your province of residence.</p>
-        <p className="text-sm text-gray-500 mb-6 font-body">You must be 19 years of age or older to enter this site.</p>
+        <h2 className="font-display text-2xl text-[#4B2D8E] mb-4">WELCOME TO<br />MY LEGACY</h2>
+        <p className="text-[#333] mb-6 font-body">Before proceeding, we need you to confirm that you are of legal age (19+) in your place of residence to view cannabis products.</p>
         <button
           onClick={onConfirm}
           className="w-full bg-[#F15929] hover:bg-[#d94d22] text-white font-display text-lg py-4 px-8 rounded-full transition-all hover:scale-105 active:scale-95"
         >
           I AM 19 OR OLDER
         </button>
-        <p className="text-xs text-gray-400 mt-4 font-body">By entering this site, you agree to our Terms & Conditions and Privacy Policy.</p>
+        <button
+          onClick={() => { window.location.href = 'https://www.google.com'; }}
+          className="mt-4 text-gray-400 hover:text-gray-600 font-body text-sm transition-colors cursor-pointer bg-transparent border-none"
+        >
+          I am under 19 — Exit
+        </button>
       </motion.div>
     </div>
   );

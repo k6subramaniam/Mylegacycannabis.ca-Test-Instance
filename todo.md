@@ -120,3 +120,25 @@
 - [x] Updated IDVerification.tsx to pass actual files to the backend
 - [x] Build passes, all 22 tests pass
 - [x] Republish
+
+## Phase 11: Fix Shop Pages — Add Sample Products for Nationwide Shipping
+- [x] Investigated: Shop page fetches from DB via tRPC but DB was empty; fixed productsData.data unwrapping
+- [x] Seeded 36 products (6 per category: flower, pre-rolls, edibles, vapes, concentrates, accessories)
+- [x] Fixed Shop.tsx to read productsData.data and map DB products to Cart Product type
+- [x] Verified all 36 products display correctly on shop page
+- [x] Republish
+
+## Phase 12: Update Homepage Verbiage and Email Subscription Field
+- [x] Update hero section text with new verbiage about 24/7 dispensary, fair prices, no taxes, free shipping
+- [x] Fix email subscription field styling to match orange design from screenshot
+- [x] Republish
+
+## Phase 12.1: Fix Hero Text Font Consistency
+- [x] Make both hero paragraphs use the same font size and style (both now text-lg md:text-xl font-body)
+- [x] Republish
+
+## Phase 12.2: Add "I am under 19 — Exit" to Age Verification Gate
+- [x] Add "I am under 19 — Exit" link below the "I AM 19 OR OLDER" button (redirects to google.com)
+- [x] Update body text to match reference design
+- [x] Updated heading to "WELCOME TO / MY LEGACY" (two lines)
+- [x] Republish

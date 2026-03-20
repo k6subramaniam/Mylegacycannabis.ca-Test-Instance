@@ -36,8 +36,11 @@ export default function Home() {
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-4">
               WELCOME TO<br /><span className="text-[#F15929]">MY LEGACY</span>
             </h1>
-            <p className="text-white/80 text-lg md:text-xl font-body mb-8 max-w-lg">
-              Your trusted cannabis dispensary serving the Greater Toronto Area and Ottawa. Premium products, nationwide shipping across Canada.
+            <p className="text-white/80 text-lg md:text-xl font-body mb-8 max-w-xl leading-relaxed">
+              My Legacy Cannabis is your go-to 24/7 dispensary with locations across the Greater Toronto Area and Ottawa. We're passionate about providing premium cannabis products at fair prices, with knowledgeable staff ready to help you find exactly what you need.
+            </p>
+            <p className="text-white/80 text-lg md:text-xl font-body mb-8 max-w-xl leading-relaxed">
+              Whether you prefer shopping in-store or online, we've got you covered with nationwide shipping across Canada via Canada Post. No taxes on any orders, and <strong className="text-[#F15929] font-display">FREE shipping on orders over $150</strong>.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/shop" className="inline-flex items-center gap-2 bg-[#F15929] hover:bg-[#d94d22] text-white font-display text-base py-3.5 px-8 rounded-full transition-all hover:scale-105 active:scale-95">
@@ -281,12 +284,14 @@ function NewsletterForm() {
     if (email) { toast.success('Thanks for subscribing!'); setEmail(''); }
   };
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-      <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"
-        className="flex-1 px-5 py-3.5 rounded-full text-[#333] font-body text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2D8E]" required aria-label="Email address" />
-      <button type="submit" className="bg-[#4B2D8E] hover:bg-[#3a2270] text-white font-display py-3.5 px-8 rounded-full transition-all hover:scale-105 active:scale-95">
-        SUBSCRIBE
-      </button>
+    <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+      <div className="relative">
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"
+          className="w-full px-6 py-4 rounded-xl bg-[#F15929]/70 border border-white/30 text-white placeholder-white/50 font-mono-legacy text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-[#F15929]/80 transition-all" required aria-label="Email address" />
+        <button type="submit" className="mt-4 w-full bg-[#4B2D8E] hover:bg-[#3a2270] text-white font-display py-3.5 px-8 rounded-xl transition-all hover:scale-105 active:scale-95">
+          SUBSCRIBE
+        </button>
+      </div>
     </form>
   );
 }
